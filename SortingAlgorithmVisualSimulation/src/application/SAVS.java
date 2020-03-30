@@ -1,6 +1,6 @@
 package application;
 //vm Arguments
-//--module-path "C:\Users\onwuc\git\SAVS\SortingAlgorithmVisualSimulation\lib" --add-modules=javafx.controls	
+//--module-path "..\SAVS\SortingAlgorithmVisualSimulation\lib" --add-modules=javafx.controls	
 import java.util.ArrayList;
 import java.util.Arrays;
 
