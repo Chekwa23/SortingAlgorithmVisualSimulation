@@ -36,33 +36,9 @@ public class SAVS extends Application {
 	
 	private class myRectangle extends Rectangle
 	{
-		private Boolean clicked;
-		private String owner;
 		public myRectangle(Points xy, int width, int height)
 		{
 			super(xy.x, xy.y, width, height);
-			clicked = false;
-			owner = "";
-		}
-	
-		public void setOwner(String temp)
-		{
-			owner = temp;
-		}
-		
-		public String getOwner()
-		{
-			return owner;
-		}
-		
-		public void setClick(Boolean click)
-		{
-			clicked = click;
-		}
-		
-		public boolean getClick()
-		{
-			return clicked;
 		}
 	}
 	
