@@ -20,7 +20,7 @@ public class SAVS extends Application {
 	ArrayList<Points> points = new ArrayList<>();
 	int arrSize = def.size();
 	final int scWidth = 700;
-	final int scHeight = 500;
+	final int scHeight = 400;
 	final int rectWidth = (scWidth-50)/arrSize;
 	
 	private class Points
