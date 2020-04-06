@@ -5,16 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
 
-import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
-import javafx.animation.StrokeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -90,13 +87,21 @@ public class SAVS extends Application {
 			{
 				return 1;
 			}
+			else if(this.height < temp.height)
+			{
+				return -1;
+			}
 			else
 			{
 				return 0;
 			}
 		}
 		
-		
+		@Override
+		public String toString()
+		{
+			return ""+height;
+		}
 	}
 	
 	private class myRectangle extends Rectangle implements Comparable<Object>
@@ -122,7 +127,14 @@ public class SAVS extends Application {
 			{
 				return 1;
 			}
-			return -1;
+			else if(this.height < temp.height)
+			{
+				return -1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		
 		public void setx(double num)
@@ -138,16 +150,15 @@ public class SAVS extends Application {
 		@Override
 		public String toString()
 		{
-			String str = ""+ height;
+//			String str = ""+ height;
 //			String str = "width-"+ width +"; Height-"+ height +"; x-"+ xy.x +"; y-"+ xy.y +";";
-			return str;
+			return ""+ height;
 		}
 	}
 	
+	//Drawing the initial unsorted array.
 	public void initialLayout(ArrayList<Integer> arr)
 	{
-		//Drawing the initial unsorted array.
-		
 		//For every iteration the x position increases by the width of the rectangle. 
 		//This is done to avoid overlapping of rectangles.
 		for(int i = 0, x = 50; i < arr.size(); i++, x+=rectWidth)
@@ -166,8 +177,9 @@ public class SAVS extends Application {
 			rect.setStroke(Color.RED);
 			rect.setFill(Color.BLACK);
 			rectList.add(rect);
+			
 			tupleList.add(new Tuple(height/10, i));
-			tree.put(i, height/10);
+			
 			layer2.getChildren().add(rect);
 		}
 	}
@@ -176,7 +188,9 @@ public class SAVS extends Application {
 	public void start(Stage primary) throws InterruptedException {
 			
 		initialLayout(def);
-		bubbleSort(tupleList);
+//		bubbleSort(tupleList);
+		insertionSort(tupleList);
+//		selectionSort(tupleList);
 		execute();
 		
 		Scene scene  = new Scene(root, scWidth, scHeight);
@@ -202,28 +216,7 @@ public class SAVS extends Application {
 		seq1.setCycleCount(1);
 		seq.play();
 		seq1.play();
-		
-		
     }
-	
-//	public void bubbleSort(ArrayList<Integer> arr)
-//	{
-//		ArrayList<Integer> arrTemp = new ArrayList<>(arr);
-//		for(int i = 0; i < arrTemp.size(); i++)
-//		{
-//			for(int j = 0; j < arrTemp.size() - 1 - i; j++)
-//			{
-//				if(arrTemp.get(j) > arrTemp.get(j+1))
-//				{
-//					translate(arrTemp.get(j),arrTemp.get(j+1));
-//					int temp = arrTemp.get(j+1);
-//					arrTemp.set(j+1, arrTemp.get(j));
-//					arrTemp.set(j, temp);
-//				}
-//			}
-//			
-//		}
-//	}
 	
 	public void bubbleSort(ArrayList<Tuple> arr)
 	{
@@ -244,7 +237,26 @@ public class SAVS extends Application {
 		}
 	}
 	
-	double time = 0.05;
+	public void insertionSort(ArrayList<Tuple> arr)
+	{
+		ArrayList<Tuple> arrTemp = new ArrayList<>(arr);
+		for(int i = 1; i < arr.size(); i++)
+		{
+			Tuple cursor = arrTemp.get(i);
+			for(int j = i; j > 0 && cursor.compareTo(arrTemp.get(j-1)) <= 0; j--)
+			{
+				translate(arrTemp.get(j-1).index,cursor.index);
+				arrTemp.set(j, arrTemp.get(j-1));
+				arrTemp.set(j-1, cursor);
+			}
+		}
+
+		System.out.println(arrTemp);
+	}
+	
+// change tuple so it would inlcude an x location for the elements
+	double time = 0.1;
+//	double time = 5;
 	public void translate(int present, int next)
 	{
 		
@@ -254,7 +266,6 @@ public class SAVS extends Application {
 		TranslateTransition trans1 = new TranslateTransition(Duration.seconds(time), rectList.get(next));
 		trans1.setByX(-rectWidth);
 		transList.add(trans1);
-		
 	}
 	
 	
