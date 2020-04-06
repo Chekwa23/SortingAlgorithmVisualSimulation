@@ -3,6 +3,7 @@ package application;
 //--module-path "..\SAVS\SortingAlgorithmVisualSimulation\lib" --add-modules=javafx.controls	
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.TreeMap;
 
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -29,8 +30,9 @@ public class SAVS extends Application {
 	
 	//Lists
 	ArrayList<Integer> def = new ArrayList<>(Arrays.asList(1,14,5,11,17,3,8,20,13,9,18,7,12,2,16,10,4,19,15,6));
-	ArrayList<Points> points = new ArrayList<>();
+	ArrayList<Integer> defClone = new ArrayList<>(def);
 	ArrayList<myRectangle> rectList = new ArrayList<>();
+	TreeMap<Integer, Integer> tree = new TreeMap<>();
 	
 	//Non constant variables
 	int arrSize = def.size();
@@ -40,7 +42,7 @@ public class SAVS extends Application {
 	int rectWidth = (scWidth-50)/arrSize;
 	
 	//Layers
-	StackPane root = new StackPane();
+	StackPane root = new StackPane(); 
 	Pane layer1 = new Pane();
 	Pane layer2 = new Pane();
 	
@@ -57,7 +59,7 @@ public class SAVS extends Application {
 	}
 
 	private class Points
-	{
+	{ 
 		double x;
 		double y;
 		public Points(double x, double y)
@@ -79,15 +81,7 @@ public class SAVS extends Application {
 			
 			this.width = width;
 			this.height = height;
-			this.xy = xy;
-		}
-		
-		public myRectangle(myRectangle rect)
-		{
-			super(rect.xy.x, rect.xy.y, rect.width, rect.height);
-			this.width = rect.width;
-			this.height = rect.height;
-			this.xy = rect.xy;
+			this.xy = new Points(xy.x, xy.y);
 		}
 
 		@Override
@@ -104,17 +98,18 @@ public class SAVS extends Application {
 		public void setx(double num)
 		{
 			xy.x = num;
+			super.setX(num);
 		}
 		
 		public double getx()
 		{
 			return xy.x;
 		}
-		
 		@Override
 		public String toString()
 		{
-			String str = "width-"+ width +"; Height-"+ height +"; x-"+ xy.x +"; y-"+ xy.y +";";
+			String str = ""+ height;
+//			String str = "width-"+ width +"; Height-"+ height +"; x-"+ xy.x +"; y-"+ xy.y +";";
 			return str;
 		}
 	}
@@ -136,21 +131,22 @@ public class SAVS extends Application {
 			int y = scHeight - (50+height);
 			
 			Points temp = new Points(x,y);
-			points.add(temp);
 			
 			myRectangle rect = new myRectangle(temp,rectWidth, height);
 			rect.setStroke(Color.RED);
 			rect.setFill(Color.BLACK);
 			rectList.add(rect);
+			tree.put(i, height/10);
 			layer2.getChildren().add(rect);
 		}
 	}
 	
 	@Override
-	public void start(Stage primary) {
+	public void start(Stage primary) throws InterruptedException {
 			
 		initialLayout(def);
-		bubbleSort(rectList);
+		bubbleSort(def);
+		execute();
 		
 		Scene scene  = new Scene(root, scWidth, scHeight);
 	    primary.setTitle("Sorting Algorithm Visual Simulation");
@@ -158,79 +154,61 @@ public class SAVS extends Application {
 		primary.show();
 	}
 	
-//	public void bubbleSort(ArrayList<Integer> arr)
-//	{
-//		ArrayList<Integer> arrTemp = new ArrayList<>(arr);
-//		for(int i = 0; i < arrTemp.size(); i++)
-//		{
-//			for(int j = 0; j < arrTemp.size() - 1 - i; j++)
-//			{
-//				if(arrTemp.get(j) > arrTemp.get(j+1))
-//				{
-//					int temp = arrTemp.get(j+1);
-//					arrTemp.set(j+1, arrTemp.get(j));
-//					arrTemp.set(j, temp);
-//				}
-//			}
-//			
-//		}
-//	}
+	ArrayList<TranslateTransition> transList = new ArrayList<>();
 	
+	public void execute() throws InterruptedException 
+	{	
+		SequentialTransition seq = new SequentialTransition();
+		SequentialTransition seq1 = new SequentialTransition();
+		
+		for(int i = 0; i < transList.size()-1; i += 2)
+		{
+			seq.getChildren().add(transList.get(i));
+			seq1.getChildren().add(transList.get(i+1));
+		}
+		
+		seq.setCycleCount(1);
+		seq1.setCycleCount(1);
+		seq.play();
+		seq1.play();
+		
+		
+    }
 	
-//	TranslateTransition trans = new TranslateTransition(Duration.seconds(5), arrTemp.get(j));
-//	trans.setToX(arrTemp.get(j+1).getX()-arrTemp.get(j).getX());
-//	trans.play();
-//	TranslateTransition trans1 = new TranslateTransition(Duration.seconds(5), arrTemp.get(j+1));
-//	trans1.setToX(arrTemp.get(j).getX()-arrTemp.get(j+1).getX());
-//	trans1.play();
-	
-	public void bubbleSort(ArrayList<myRectangle> arr)
+	public void bubbleSort(ArrayList<Integer> arr)
 	{
-		ArrayList<myRectangle> arrTemp = new ArrayList<>(arr);
-
+		ArrayList<Integer> arrTemp = new ArrayList<>(arr);
 		for(int i = 0; i < arrTemp.size(); i++)
 		{
 			for(int j = 0; j < arrTemp.size() - 1 - i; j++)
 			{
-				if(arrTemp.get(j).compareTo(arrTemp.get(j+1)) > 0)
+				if(arrTemp.get(j) > arrTemp.get(j+1))
 				{
-					//Deleting the rectangles from the panes
-					layer2.getChildren().removeAll(arrTemp.get(j),arrTemp.get(j+1));
-					
-					
-					
-					//Swapping the x locations of the two rectangles
-					double xtemp = arrTemp.get(j+1).getx();
-					arrTemp.get(j+1).setx(arrTemp.get(j).getx());
-					arrTemp.get(j).setx(xtemp);
-					
-					//Swapping the rectangles in the rectangle array
-					myRectangle temp = new myRectangle(arrTemp.get(j+1));
+					translate(arrTemp.get(j),arrTemp.get(j+1));
+					int temp = arrTemp.get(j+1);
 					arrTemp.set(j+1, arrTemp.get(j));
 					arrTemp.set(j, temp);
-					
-					myRectangle temp1 = new myRectangle(arrTemp.get(j));
-					temp1.setStroke(Color.RED);
-					temp1.setFill(Color.BLACK);
-					myRectangle temp2 = new myRectangle(arrTemp.get(j+1));
-					temp2.setStroke(Color.RED);
-					temp2.setFill(Color.BLACK);
-					
-					//Drawing the rectangles back on the plane but in different locations
-					layer2.getChildren().addAll(temp1,temp2);	
 				}
-				
 			}
 			
 		}
+	}
+	
+	double time = 0.05;
+	public void translate(int present, int next)
+	{
 		
-		
-		
+		TranslateTransition trans = new TranslateTransition(Duration.seconds(time), rectList.get(defClone.indexOf(present)));
+		trans.setByX(rectWidth);
+		transList.add(trans);
+		TranslateTransition trans1 = new TranslateTransition(Duration.seconds(time), rectList.get(defClone.indexOf(next)));
+		trans1.setByX(-rectWidth);
+		transList.add(trans1);
 		
 	}
+	
 	
 	public static void main(String[] args) {
 		launch(args);
 	}
 }
-
