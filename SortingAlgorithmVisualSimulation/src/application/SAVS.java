@@ -31,6 +31,7 @@ public class SAVS extends Application {
 	//Lists
 	ArrayList<Integer> def = new ArrayList<>(Arrays.asList(1,14,5,11,17,3,8,20,13,9,18,7,12,2,16,10,4,19,15,6));
 	ArrayList<Integer> defClone = new ArrayList<>(def);
+	ArrayList<Tuple> tupleList = new ArrayList<>();
 	ArrayList<myRectangle> rectList = new ArrayList<>();
 	TreeMap<Integer, Integer> tree = new TreeMap<>();
 	
@@ -67,6 +68,35 @@ public class SAVS extends Application {
 			this.x = x;
 			this.y = y;
 		}
+	}
+	
+	private class Tuple implements Comparable
+	{
+		int height;
+		int index;
+		
+		public Tuple(int height, int index)
+		{
+			this.height = height;
+			this.index = index;
+		}
+
+		@Override
+		public int compareTo(Object o) 
+		{
+			Tuple temp = (Tuple) o;
+			
+			if(this.height > temp.height)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		
+		
 	}
 	
 	private class myRectangle extends Rectangle implements Comparable<Object>
@@ -136,6 +166,7 @@ public class SAVS extends Application {
 			rect.setStroke(Color.RED);
 			rect.setFill(Color.BLACK);
 			rectList.add(rect);
+			tupleList.add(new Tuple(height/10, i));
 			tree.put(i, height/10);
 			layer2.getChildren().add(rect);
 		}
@@ -145,7 +176,7 @@ public class SAVS extends Application {
 	public void start(Stage primary) throws InterruptedException {
 			
 		initialLayout(def);
-		bubbleSort(def);
+		bubbleSort(tupleList);
 		execute();
 		
 		Scene scene  = new Scene(root, scWidth, scHeight);
@@ -175,17 +206,36 @@ public class SAVS extends Application {
 		
     }
 	
-	public void bubbleSort(ArrayList<Integer> arr)
+//	public void bubbleSort(ArrayList<Integer> arr)
+//	{
+//		ArrayList<Integer> arrTemp = new ArrayList<>(arr);
+//		for(int i = 0; i < arrTemp.size(); i++)
+//		{
+//			for(int j = 0; j < arrTemp.size() - 1 - i; j++)
+//			{
+//				if(arrTemp.get(j) > arrTemp.get(j+1))
+//				{
+//					translate(arrTemp.get(j),arrTemp.get(j+1));
+//					int temp = arrTemp.get(j+1);
+//					arrTemp.set(j+1, arrTemp.get(j));
+//					arrTemp.set(j, temp);
+//				}
+//			}
+//			
+//		}
+//	}
+	
+	public void bubbleSort(ArrayList<Tuple> arr)
 	{
-		ArrayList<Integer> arrTemp = new ArrayList<>(arr);
+		ArrayList<Tuple> arrTemp = new ArrayList<>(arr);
 		for(int i = 0; i < arrTemp.size(); i++)
 		{
 			for(int j = 0; j < arrTemp.size() - 1 - i; j++)
 			{
-				if(arrTemp.get(j) > arrTemp.get(j+1))
+				if(arrTemp.get(j).compareTo(arrTemp.get(j+1)) > 0)
 				{
-					translate(arrTemp.get(j),arrTemp.get(j+1));
-					int temp = arrTemp.get(j+1);
+					translate(arrTemp.get(j).index,arrTemp.get(j+1).index);
+					Tuple temp = arrTemp.get(j+1);
 					arrTemp.set(j+1, arrTemp.get(j));
 					arrTemp.set(j, temp);
 				}
@@ -198,10 +248,10 @@ public class SAVS extends Application {
 	public void translate(int present, int next)
 	{
 		
-		TranslateTransition trans = new TranslateTransition(Duration.seconds(time), rectList.get(defClone.indexOf(present)));
+		TranslateTransition trans = new TranslateTransition(Duration.seconds(time), rectList.get(present));
 		trans.setByX(rectWidth);
 		transList.add(trans);
-		TranslateTransition trans1 = new TranslateTransition(Duration.seconds(time), rectList.get(defClone.indexOf(next)));
+		TranslateTransition trans1 = new TranslateTransition(Duration.seconds(time), rectList.get(next));
 		trans1.setByX(-rectWidth);
 		transList.add(trans1);
 		
