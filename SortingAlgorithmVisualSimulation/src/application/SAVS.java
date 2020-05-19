@@ -81,6 +81,8 @@ public class SAVS extends Application {
 		@Override
 		public int compareTo(Object o) 
 		{
+
+			//Just to see the difference
 			Tuple temp = (Tuple) o;
 			
 			if(this.height > temp.height)
