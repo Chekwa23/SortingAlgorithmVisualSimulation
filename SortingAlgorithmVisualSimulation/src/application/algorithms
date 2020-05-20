@@ -1,0 +1,54 @@
+public void insertionSort(ArrayList<Integer> arr)
+	{
+		ArrayList<Integer> arrTemp = new ArrayList<>(arr);
+		for(int i = 1; i < arr.size(); i++)
+		{
+			int cursor = arrTemp.get(i);
+			int j;
+			for(j = i; j > 0 && cursor < arrTemp.get(j-1); j--)
+			{
+				arrTemp.set(j, arrTemp.get(j-1));
+			}
+			arrTemp.set(j, cursor);
+		}
+	}
+	
+
+public void bubbleSort(ArrayList<Integer> arr)
+	{
+		ArrayList<Integer> arrTemp = new ArrayList<>(arr);
+		for(int i = 0; i < arrTemp.size(); i++)
+		{
+			for(int j = 0; j < arrTemp.size() - 1 - i; j++)
+			{
+				if(arrTemp.get(j) > arrTemp.get(j+1))
+				{
+					int temp = arrTemp.get(j+1);
+					arrTemp.set(j+1, arrTemp.get(j));
+					arrTemp.set(j, temp);
+				}
+			}
+			
+		}
+	}
+	
+	public void selectionSort(ArrayList<Integer> arr)
+	{
+		ArrayList<Integer> arrTemp = new ArrayList<>(arr);
+		for(int i = 0; i < arrTemp.size(); i++)
+		{
+			int min = arrTemp.get(i);
+			int x = i;
+			for(int j = i; j < arrTemp.size(); j++)
+			{
+				if(min > arrTemp.get(j))
+				{
+					x = j;
+					min = arrTemp.get(j);
+				}
+			}
+			arrTemp.set(x, arrTemp.get(i));
+			arrTemp.set(i, min);
+		}
+		System.out.println(arrTemp);
+	}
